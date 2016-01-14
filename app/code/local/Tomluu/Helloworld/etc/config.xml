@@ -1,0 +1,18 @@
+<config>
+    <modules>
+        <Tomluu_Helloworld>
+            <version>0.1.0</version>
+        </Tomluu_Helloworld>
+    </modules>
+    <frontend>
+        <routers>
+            <tomluu_helloworld>
+                <use>standard</use>
+                <args>
+                    <module>Tomluu_Helloworld</module>
+                    <frontName>helloworld</frontName>
+                </args>
+            </tomluu_helloworld>
+        </routers>
+    </frontend>
+</config>
