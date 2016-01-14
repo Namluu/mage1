@@ -1,0 +1,7 @@
+<layout version="0.1.0">
+    <default translate="label" module="page">
+        <reference name="footer">
+            <block type="recentproducts/abc" name="recentproducts_recentproducts" template="recentproducts/recentproducts.phtml"></block>
+        </reference>
+    </default>
+</layout>
