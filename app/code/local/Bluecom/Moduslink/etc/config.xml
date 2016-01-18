@@ -50,6 +50,7 @@
                 <title>Moduslink</title>
                 <active>1</active>
                 <model>bluecom_moduslink/paymentmethod</model>
+                <methods>AMEX,VISA,MASTER,PAYPAL</methods>
             </moduslink>
         </payment>
     </default>
