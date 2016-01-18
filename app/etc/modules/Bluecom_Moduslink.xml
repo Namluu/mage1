@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Bluecom_Moduslink>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Mage_Payment />
+                <Mage_Checkout />
+            </depends>
+        </Bluecom_Moduslink>
+    </modules>
+</config>
