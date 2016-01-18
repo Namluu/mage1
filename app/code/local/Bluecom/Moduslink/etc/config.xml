@@ -47,7 +47,9 @@
     <default>
         <payment>
             <moduslink>
+                <title>Moduslink</title>
                 <active>1</active>
+                <model>bluecom_moduslink/paymentmethod</model>
             </moduslink>
         </payment>
     </default>
