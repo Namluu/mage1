@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <!--
+    <bluecom_moduslink_payment_listmethod>
+        <remove name="right" />
+        <remove name="left" />
+    </bluecom_moduslink_payment_listmethod>
+-->
+
+    <checkout_onepage_paymentmethod>
+        <remove name="right"/>
+        <remove name="left"/>
+
+        <block type="checkout/onepage_payment_methods" name="root" output="toHtml" template="checkout/onepage/payment/methods.phtml">
+            <action method="setMethodFormTemplate"><method>purchaseorder</method><template>payment/form/purchaseorder.phtml</template></action>
+            <block type="core/template" name="checkout.onepage.payment.methods.scripts" as="scripts" />
+            <block type="core/template" name="checkout.onepage.payment.methods.additional" as="additional">
+                <!--<block type="core/template" name="bluecom.creditcard.icon.top"  template="bluecom/features/creditcard/icon.phtml" />-->
+            </block>
+            <block type="core/template" name="checkout.onepage.payment.methods.moduslink" as="moduslink" template="checkout/onepage/payment/methods/moduslink.phtml" />
+        </block>
+    </checkout_onepage_paymentmethod>
+
+</layout>

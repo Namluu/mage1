@@ -1,0 +1,130 @@
+<style>
+#co-payment-form.loading * { visibility: hidden; }
+#co-payment-form.loading img.md-loading {visibility: visible;width: 24px;position: absolute;}
+</style>
+<?php
+// Show payment methods
+$sourceModel = Mage::getModel("bluecom_moduslink/system_config_source_paymentMethods")->toOptionArray();
+$strMethods = Mage::getStoreConfig('payment/moduslink/methods');
+$arrMethods = explode(",", $strMethods);
+$payPalNote = $this->__("You will be redirected to PayPal's website after reviewing and placing your order.");
+
+$arrPmLabel = array(
+    "paypal" => "PayPal",
+    "creditcard" => "Credit Cards",
+);
+
+$apiMdHandler = Mage::helper("bluecom_moduslink/api");
+$arrPMByGroup = $apiMdHandler->groupMDMethods($arrMethods);
+
+// Get url redirect
+$paymentGateWayUrl = 'http://mage1.dev.loc/moduslink/payment/gateway';
+$paymentLink = 'https://test.moduslink-payments.com';
+$sessionTokenCards = 'A53054E74B13EB6B7101EB78C8E2609D.sbg-vm-fe01';
+?>
+
+<div class="form-list" id="moduslink_list">
+    <?php if(!empty($arrPMByGroup)): ?>
+        <?php
+        $index = 0;
+        foreach ($arrPMByGroup as $group => $arrMethod) :
+                $isFirst = $index === 0 ? true : false;
+            ?>
+            <dt>
+                <input type="radio"
+                       id="p_method_md_<?php echo $group ?>"
+                       name="payment[method]"
+                       data-type="moduslink"
+                       onclick="payment.switchMethod('md_<?php echo $group ?>', this); "
+                       value="MD_<?php echo $group  ?>"
+                       class="radio"
+                    />
+                <label for="p_method_md_<?php echo $group ?>"><?php echo $arrPmLabel[$group]  ?></label>
+            </dt>
+            <?php
+            $id  = strtolower($group);
+            ?>
+
+            <dd id="<?php echo "payment_form_md_". $id  ?>" class="clearfix" style="display: none">
+                <?php if($id === "paypal"):  ?>
+                    <div class="paypal-note" ><?php echo $payPalNote  ?></div>
+                    <div class="cardStyleSprite style-PAYPAL"></div>
+                <?php endif;  ?>
+                    <div class='formdiv_md'></div>
+            </dd>
+            <?php
+            $index++;
+        endforeach;
+        ?>
+        <script type="text/javascript">
+            (function ($) {
+
+                var $paymentForm = $("#co-payment-form");
+                var $inputMD = $('#co-payment-form dt>input.radio[data-type="moduslink"]');
+                var modusLinkApi = '<?php echo $paymentLink; ?>',
+                    lang= 'en',
+                    style = 'plain',
+                    isCompressJs = 'false';
+                var mapG2PT = {
+                        'paypal': 'db',
+                        'creditcard' : 'pa'
+                    };
+
+                var loadAllMdForm = function() {
+                    var showLoader= function() {
+                        $paymentForm.addClass("loading");
+                        $paymentForm.prepend("<img src='<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>' class='v-middle md-loading' />");
+                    };
+
+                    var hideLoader = function() {
+                        $paymentForm.removeClass("loading");
+                        $paymentForm.find("img.md-loading").remove();
+                    };
+
+                    showLoader();
+
+                    var loadWidgetScript = function() {
+                        var link = modusLinkApi + '/frontend/widget/v3/widget.js?language=' +lang+ '&style=' + style + '&compressed=' + isCompressJs;
+                        $.getScript( link , function() {
+                            /* One form full load. hideLoader */
+                            cnp_jQuery(document).on('cnp:ready', function() {
+                                loadWidgetScript.isLoaded = true;
+                                setTimeout(function() {
+                                    hideLoader();
+                                }, 10);
+                            });
+                        });
+                    };
+
+                    loadWidgetScript();
+
+                    $inputMD.each(function() {
+                        var $this = $(this);
+
+                        var group = $this.val().replace('MD_', ''),
+                            groupLowerCase = group.toLowerCase(),
+                            brand = 'VISA MASTER AMEX PAYPAL',//TODO: _buildBrandListFromGroup
+                            $dd = $this.parent("dt").next()
+                            ;
+
+                        if(mapG2PT[groupLowerCase] === "pa")
+                        {
+                            $dd.find(".formdiv_md").empty().append("<div class='payments' id='payform_" + groupLowerCase + "' style='height: auto; '>" +
+                                "<form action = '<?php echo $paymentGateWayUrl  ?>' id = '" + '<?php echo $sessionTokenCards  ?>' + "'>" + brand + "</form></div>" );
+                        }
+                        else if(mapG2PT[groupLowerCase] === "db") {
+                            $dd.find(".formdiv_md").empty().append("<div class='payments' id='payform_" + groupLowerCase + "' style='height: auto; '>" +
+                                "<form action = '<?php echo $paymentGateWayUrl  ?>' id = '" + '<?php echo $sessionTokenPayPal  ?>' + "'>" + brand + "</form></div>" );
+                        }
+                    });
+                };
+
+                loadAllMdForm();
+            })(jQuery);
+        </script>
+    <?php
+    else:
+        echo $this->__("There are no payment method has been choice. Please choice one!");
+    endif;
+    ?>
+</div>

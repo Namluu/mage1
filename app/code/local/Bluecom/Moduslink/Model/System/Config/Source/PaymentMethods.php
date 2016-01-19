@@ -17,6 +17,11 @@ class Bluecom_Moduslink_Model_System_Config_Source_PaymentMethods
                     "value" => "MASTER"
                 ),
 
+                "MAESTRO" => array(
+                    "label" => "Maestro",
+                    "value" => "MAESTRO"
+                ),
+
                 "VISA" => array(
                     "label" => "Visa Credit card",
                     "value" => "VISA",

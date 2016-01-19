@@ -6,6 +6,15 @@ $strMethods = Mage::getStoreConfig('payment/moduslink/methods');
 $arrMethods = explode(",", $strMethods); //@todo Replace by constant instead
 $sourceModel = Mage::getModel("bluecom_moduslink/system_config_source_paymentMethods")->toOptionArray();
 
+$apiMdHandler = Mage::helper("bluecom_moduslink/api");
+$arrPMByGroup = $apiMdHandler->groupMDMethods($arrMethods);
+$arrPmLabel = array(
+    "paypal" => "PayPal",
+    "creditcard" => "Credit Cards",
+);
+
+
+
 if(!empty($arrMethods)):
 ?>
 
@@ -20,4 +29,19 @@ if(!empty($arrMethods)):
 
 <?php endif; ?>
 
+<?php /*if(!empty($arrPMByGroup)):$index = 0;?>
+    <?php foreach ($arrPMByGroup as $group => $arrMethod) : ?>
+        <dt>
+            <input type="radio"
+                   id="p_method_md_<?php echo $group ?>"
+                   name="payment[method]"
+                   data-type="moduslink"
+                   onclick="payment.switchMethod('md_<?php echo $group ?>', this); "
+                   value="MD_<?php echo $group  ?>"
+                   class="radio"
+                />
+            <label for="p_method_md_<?php echo $group ?>"><?php echo $arrPmLabel[$group]  ?></label>
+        </dt>
+    <?php endforeach; ?>
+<?php endif;*/ ?>
 </div>

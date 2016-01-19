@@ -54,4 +54,35 @@
             </moduslink>
         </payment>
     </default>
+
+    <frontend>
+        
+        <routers>
+            <bluecom_moduslink>
+                <use>standard</use>
+                <args>
+                    <module>Bluecom_Moduslink</module>
+                    <frontName>moduslink</frontName>
+                </args>
+            </bluecom_moduslink>
+<!--
+            <checkout>
+                <args>
+                    <modules>
+                        <Bluecom_Moduslink before="Mage_Checkout">Bluecom_Moduslink</Bluecom_Moduslink>
+                    </modules>
+                </args>
+            </checkout>
+-->
+        </routers>
+       
+        <layout>
+            <updates>
+                <bluecom_moduslink>
+                    <file>bluecom_moduslink.xml</file>
+                </bluecom_moduslink>
+            </updates>
+        </layout>
+        
+    </frontend>
 </config>
