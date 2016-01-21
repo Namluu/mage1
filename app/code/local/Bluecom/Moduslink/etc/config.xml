@@ -51,6 +51,8 @@
                 <active>1</active>
                 <model>bluecom_moduslink/paymentmethod</model>
                 <methods>AMEX,VISA,MASTER,PAYPAL</methods>
+                <url>https://test.moduslink-payments.com</url>
+                <is_test_mode>1</is_test_mode>
             </moduslink>
         </payment>
     </default>

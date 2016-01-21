@@ -1,7 +1,3 @@
-<style>
-#co-payment-form.loading * { visibility: hidden; }
-#co-payment-form.loading img.md-loading {visibility: visible;width: 24px;position: absolute;}
-</style>
 <?php
 // Show payment methods
 $sourceModel = Mage::getModel("bluecom_moduslink/system_config_source_paymentMethods")->toOptionArray();
@@ -15,12 +11,23 @@ $arrPmLabel = array(
 );
 
 $apiMdHandler = Mage::helper("bluecom_moduslink/api");
-$arrPMByGroup = $apiMdHandler->groupMDMethods($arrMethods);
+$arrPMByGroup = $apiMdHandler->groupMDMethods($arrMethods);//group methods to Credit Card
+
+$countryIso2 = Mage::helper('bluecom_moduslink')->getCountryCodeISO2ByStore(
+    Mage::app()->getStore()->getCode());
+$lang = Mage::helper('bluecom_moduslink')->getLangCodeByStore();
+
+// Generate secret token validate for ajax
+$arrPTC = $apiMdHandler->getArrPaymentType("cards");
+$arrPTC["CURRENCY.CODE"] = Mage::app()->getStore()->getCurrentCurrencyCode();
+$arrPTC["COUNTRY"] = $countryIso2; 
 
 // Get url redirect
-$paymentGateWayUrl = 'http://mage1.dev.loc/moduslink/payment/gateway';
-$paymentLink = 'https://test.moduslink-payments.com';
-$sessionTokenCards = 'A53054E74B13EB6B7101EB78C8E2609D.sbg-vm-fe01';
+$paymentGateWayUrl = Mage::helper('bluecom_moduslink')->getPaymentGatewayUrl();
+// Get moduslink url to get Payment Form
+$paymentLink = $apiMdHandler->getPaymentLink();
+// Payment Form ID - PA
+$sessionTokenCards = $apiMdHandler->generateAndSaveSessionToken($arrPTC);
 ?>
 
 <div class="form-list" id="moduslink_list">

@@ -15,8 +15,6 @@
     </checkout_onepage_index>
 
     <checkout_onepage_paymentmethod>
-        
-
         <remove name="right"/>
         <remove name="left"/>
 
