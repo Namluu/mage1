@@ -6,8 +6,17 @@
         <remove name="left" />
     </bluecom_moduslink_payment_listmethod>
 -->
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type><name>css/moduslink.css</name>
+            </action>
+        </reference>
+    </checkout_onepage_index>
 
     <checkout_onepage_paymentmethod>
+        
+
         <remove name="right"/>
         <remove name="left"/>
 
