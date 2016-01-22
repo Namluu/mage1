@@ -11,10 +11,14 @@ $arrPmLabel = array(
 );
 
 $apiMdHandler = Mage::helper("bluecom_moduslink/api");
-$arrPMByGroup = $apiMdHandler->groupMDMethods($arrMethods);//group methods to Credit Card
+$arrPMByGroup = $apiMdHandler->groupMDMethods($arrMethods);
 
-$countryIso2 = Mage::helper('bluecom_moduslink')->getCountryCodeISO2ByStore(
-    Mage::app()->getStore()->getCode());
+// Get url redirect
+$paymentGateWayUrl = Mage::helper('bluecom_moduslink')->getPaymentGatewayUrl();
+
+
+
+$countryIso2 = Mage::helper('bluecom_moduslink')->getCountryCodeISO2ByStore(Mage::app()->getStore()->getCode());
 $lang = Mage::helper('bluecom_moduslink')->getLangCodeByStore();
 
 // Generate secret token validate for ajax
@@ -22,62 +26,89 @@ $arrPTC = $apiMdHandler->getArrPaymentType("cards");
 $arrPTC["CURRENCY.CODE"] = Mage::app()->getStore()->getCurrentCurrencyCode();
 $arrPTC["COUNTRY"] = $countryIso2; 
 
-// Get url redirect
-$paymentGateWayUrl = Mage::helper('bluecom_moduslink')->getPaymentGatewayUrl();
-// Get moduslink url to get Payment Form
-$paymentLink = $apiMdHandler->getPaymentLink();
-// Payment Form ID - PA
 $sessionTokenCards = $apiMdHandler->generateAndSaveSessionToken($arrPTC);
+
+if($arrPTC["PAYMENT.TYPE"] === "DB") {
+    $sessionTokenPayPal = $sessionTokenCards;
+}
+else {
+    $arrPTP = $apiMdHandler->getArrPaymentType("PayPal");
+    $arrPTP["CURRENCY.CODE"] = Mage::app()->getStore()->getCurrentCurrencyCode();
+    $arrPTP["COUNTRY"] = $countryIso2;
+    $sessionTokenPayPal = $apiMdHandler->generateAndSaveSessionToken($arrPTP);
+}
+
+$isTestMode = $apiMdHandler->isTestMode();
+$paymentLink = $apiMdHandler->getPaymentLink();
+
 ?>
-
 <div class="form-list" id="moduslink_list">
-    <?php if(!empty($arrPMByGroup)): ?>
-        <?php
-        $index = 0;
-        foreach ($arrPMByGroup as $group => $arrMethod) :
-                $isFirst = $index === 0 ? true : false;
-            ?>
-            <dt>
-                <input type="radio"
-                       id="p_method_md_<?php echo $group ?>"
-                       name="payment[method]"
-                       data-type="moduslink"
-                       onclick="payment.switchMethod('md_<?php echo $group ?>', this); "
-                       value="MD_<?php echo $group  ?>"
-                       class="radio"
-                    />
-                <label for="p_method_md_<?php echo $group ?>"><?php echo $arrPmLabel[$group]  ?></label>
-            </dt>
+
+    <?php if(!empty($arrPMByGroup)):
+        ?>
             <?php
-            $id  = strtolower($group);
+            $index = 0;
+            foreach ($arrPMByGroup as $group => $arrMethod) :
+                    $isFirst = $index === 0 ? true : false;
+                ?>
+                <dt>
+                    <input type="radio"
+                           id="p_method_md_<?php echo $group ?>"
+                           name="payment[method]"
+                           data-type="moduslink"
+                           onclick="payment.switchMethod('md_<?php echo $group ?>', this); "
+                           value="MD_<?php echo $group  ?>"
+                           class="radio"
+                        />
+                    <label for="p_method_md_<?php echo $group ?>"><?php echo $arrPmLabel[$group]  ?></label>
+                </dt>
+                <?php
+                $id  = strtolower($group);
+                ?>
+
+                <dd id="<?php echo "payment_form_md_". $id  ?>" class="clearfix" style="display: none">
+                    <?php if($id === "paypal"):  ?>
+                        <div class="paypal-note" ><?php echo $payPalNote  ?></div>
+                        <div class="cardStyleSprite style-PAYPAL"></div>
+                    <?php endif;  ?>
+                        <div class='formdiv_md'></div>
+                </dd>
+                <?php
+                $index++;
+            endforeach;
             ?>
 
-            <dd id="<?php echo "payment_form_md_". $id  ?>" class="clearfix" style="display: none">
-                <?php if($id === "paypal"):  ?>
-                    <div class="paypal-note" ><?php echo $payPalNote  ?></div>
-                    <div class="cardStyleSprite style-PAYPAL"></div>
-                <?php endif;  ?>
-                    <div class='formdiv_md'></div>
-            </dd>
-            <?php
-            $index++;
-        endforeach;
-        ?>
         <script type="text/javascript">
+
             (function ($) {
 
-                var $paymentForm = $("#co-payment-form");
-                var $inputMD = $('#co-payment-form dt>input.radio[data-type="moduslink"]');
+                var isLoadWidget = false, $containerPaymentMethod = $("#checkout-step-payment"), $paymentForm = $("#co-payment-form");
                 var modusLinkApi = '<?php echo $paymentLink; ?>',
-                    lang= 'en',
+                    lang= '<?php echo $lang; ?>',
                     style = 'plain',
-                    isCompressJs = 'false';
-                var mapG2PT = {
+                    groupToLangGroup = JSON.parse('<?php echo Mage::helper("core")->jsonEncode($arrPMByGroup) ?>'),
+                    isCompressJs = '<?php echo $isTestMode === "1" ? "false" : "true"  ?>',
+                    mapG2PT = {
                         'paypal': 'db',
                         'creditcard' : 'pa'
                     };
 
+                var _buildBrandListFromGroup = function(group, groupToLangGroup) {
+                    var arrReturn = [];
+                    if(typeof groupToLangGroup[group] === "undefined" ||  groupToLangGroup[group].length === 0)
+                    {
+                        return "";
+                    }
+
+                    for(var i = 0; i< groupToLangGroup[group].length; i++) {
+                        arrReturn.push(groupToLangGroup[group][i]);
+                    }
+
+                    return arrReturn.join(" ");
+                };
+
                 var loadAllMdForm = function() {
+
                     var showLoader= function() {
                         $paymentForm.addClass("loading");
                         $paymentForm.prepend("<img src='<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>' class='v-middle md-loading' />");
@@ -90,14 +121,24 @@ $sessionTokenCards = $apiMdHandler->generateAndSaveSessionToken($arrPTC);
 
                     showLoader();
 
+                    var $inputMD = $('#co-payment-form dt>input.radio[data-type="moduslink"]');
+
                     var loadWidgetScript = function() {
+
                         var link = modusLinkApi + '/frontend/widget/v3/widget.js?language=' +lang+ '&style=' + style + '&compressed=' + isCompressJs;
+
+//                        link = "<?php //echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK, true) . "skin/frontend/acer/default/js/moduslink/widget.js"  ?>//";
+
                         $.getScript( link , function() {
                             /* One form full load. hideLoader */
                             cnp_jQuery(document).on('cnp:ready', function() {
                                 loadWidgetScript.isLoaded = true;
                                 setTimeout(function() {
+
                                     hideLoader();
+
+                                    /* Choice the first one */
+//                                    jQuery('#co-payment-form dt>input.radio[data-type="moduslink"]').eq(0).trigger('click');
                                 }, 10);
                             });
                         });
@@ -105,12 +146,21 @@ $sessionTokenCards = $apiMdHandler->generateAndSaveSessionToken($arrPTC);
 
                     loadWidgetScript();
 
+                    /* try to re load if moduslink form not response */
+                    setTimeout(function() {
+                        if(!loadWidgetScript.isLoaded) {
+                            if(confirm("<?php echo $this->__('There are a error in checkout process. Do you want to checkout it again.')  ?>")) {
+                                window.location.href = "<?php echo Mage::helper('checkout/cart')->getCartUrl(); ?>";
+                            }
+                        }
+                    }, 1000*120); /* two min */
+
                     $inputMD.each(function() {
                         var $this = $(this);
 
                         var group = $this.val().replace('MD_', ''),
                             groupLowerCase = group.toLowerCase(),
-                            brand = 'VISA MASTER AMEX PAYPAL',//TODO: _buildBrandListFromGroup
+                            brand = _buildBrandListFromGroup(group, groupToLangGroup),
                             $dd = $this.parent("dt").next()
                             ;
 
@@ -124,12 +174,17 @@ $sessionTokenCards = $apiMdHandler->generateAndSaveSessionToken($arrPTC);
                                 "<form action = '<?php echo $paymentGateWayUrl  ?>' id = '" + '<?php echo $sessionTokenPayPal  ?>' + "'>" + brand + "</form></div>" );
                         }
                     });
+
                 };
 
+
                 loadAllMdForm();
+
+
             })(jQuery);
         </script>
-    <?php
+
+        <?php
     else:
         echo $this->__("There are no payment method has been choice. Please choice one!");
     endif;
