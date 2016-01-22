@@ -46,3 +46,95 @@ Checkout.prototype.gotoSection = function (section, reloadProgressBlock) {
         this.resetPreviousSteps();
     }
 }
+
+Payment.prototype._oldInitialize = Payment.prototype.initialize;
+Payment.prototype.initialize = function(form, saveUrl, saveMdUrl){
+    Payment.prototype._oldInitialize.call(this, form, saveUrl);
+    this.saveMdUrl = saveMdUrl;
+};
+/* Override save of checkout for save purpose */
+Payment.prototype.save = function(){
+    if (checkout.loadWaiting!=false) return;
+    var validator = new Validation(this.form);
+
+    /* Check moduslink function */
+
+    var isTrueForModuslink = true,
+        isModuslink = jQuery('[name="payment[method]"]:checked').attr('data-type') === "moduslink",
+        saveUrl = this.saveUrl, mdPMName = ''
+        ;
+
+    if(isModuslink) {
+
+        /* Do nothing if moduslink is not exists */
+        var $input = jQuery("#moduslink_list input:checked"), $dd = $input.parent("dt").next();
+        if($dd.find("form.cnpForm").length === 0){
+            return;
+        }
+
+        mdPMName = $dd.find('[name="ACCOUNT.BRAND"]').val();
+        if($input.val().toLowerCase() === "md_creditcard") {
+
+            isTrueForModuslink = window.cnp_Payment.validateCardSync();
+        }
+
+        saveUrl = this.saveMdUrl;
+    }
+
+
+    if (this.validate() && validator.validate() && isTrueForModuslink ) {
+        checkout.setLoadWaiting('payment');
+        var parameter = Form.serializeMdElements(Form.getElements(this.form), {denyKey: ["ACCOUNT.NUMBER", "ACCOUNT.EXPIRY_MONTH", "ACCOUNT.EXPIRY_YEAR", "ACCOUNT.HOLDER", "ACCOUNT.VERIFICATION", "FRONTEND.RESPONSE_URL", "FRONTEND.VERSION", "FRONTEND.MODE", "ACCOUNT.BRAND"]});
+
+        if(isModuslink) {
+            parameter["ACCOUNT.BRAND"] = encodeURIComponent(mdPMName);
+        }
+
+        var request = new Ajax.Request(
+            saveUrl,
+            {
+                method:'post',
+                onComplete: this.onComplete,
+                onSuccess: this.onSave,
+                onFailure: checkout.ajaxFailure.bind(checkout),
+                parameters: parameter
+            }
+        );
+    }
+
+};
+/* Override form. Don't allow some special key */
+Form.serializeMdElements = function(elements, options) {
+    if (typeof options != 'object') options = { hash: !!options };
+    else if (Object.isUndefined(options.hash)) options.hash = true;
+    var key, value, submitted = false, submit = options.submit, accumulator, initial;
+
+    if (options.hash) {
+        initial = {};
+        accumulator = function(result, key, value) {
+            if (key in result) {
+                if (!Object.isArray(result[key])) result[key] = [result[key]];
+                result[key].push(value);
+            } else result[key] = value;
+            return result;
+        };
+    } else {
+        initial = '';
+        accumulator = function(result, key, value) {
+            return result + (result ? '&' : '') + encodeURIComponent(key) + '=' + encodeURIComponent(value);
+        }
+    }
+
+    return elements.inject(initial, function(result, element) {
+        if (!element.disabled && element.name) {
+            key = element.name; value = $(element).getValue();
+            if (value != null && element.type != 'file' && (element.type != 'submit' || (!submitted &&
+                submit !== false && (!submit || key == submit) && (submitted = true)))) {
+                if(options.denyKey.indexOf(key) === -1) {
+                    result = accumulator(result, key, value);
+                }
+            }
+        }
+        return result;
+    });
+};
