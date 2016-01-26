@@ -5,4 +5,13 @@ class Bluecom_Moduslink_Model_Paymentmethod extends Mage_Payment_Model_Method_Ab
     #protected $_formBlockType = 'bluecom_moduslink/form_moduslink';
     # move to rewrite route method
     protected $_infoBlockType = 'bluecom_moduslink/info_moduslink';
+
+    public function assignData($data)
+    {
+        $info = $this->getInfoInstance();
+        if($data->getModuslinkData()) {
+            $info->setModuslinkData($data->getModuslinkData());
+        }
+        return $this;
+    }
 }

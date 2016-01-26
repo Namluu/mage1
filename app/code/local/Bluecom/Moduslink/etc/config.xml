@@ -67,7 +67,6 @@
                     <frontName>moduslink</frontName>
                 </args>
             </bluecom_moduslink>
-<!--
             <checkout>
                 <args>
                     <modules>
@@ -75,7 +74,6 @@
                     </modules>
                 </args>
             </checkout>
--->
         </routers>
        
         <layout>
