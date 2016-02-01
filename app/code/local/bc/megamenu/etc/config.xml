@@ -5,24 +5,6 @@
             <version>0.1.0</version>
         </Bc_MegaMenu>
     </modules>
-    <frontend>
-        <routers>
-            <megamenu>
-                <use>standard</use>
-                <args>
-                    <module>Bc_MegaMenu</module>
-                    <frontName>megamenu</frontName>
-                </args>
-            </megamenu>
-        </routers>
-        <layout>
-            <updates>
-                <megamenu>
-                    <file>bc_megamenu.xml</file>
-                </megamenu>
-            </updates>
-        </layout>
-    </frontend>
     <adminhtml>
         <acl>
             <resources>
@@ -48,18 +30,6 @@
             </resources>
         </acl>
     </adminhtml>
-    <global>
-        <blocks>
-            <megamenu>
-                <class>Bc_MegaMenu_Block</class>
-            </megamenu>
-        </blocks>
-        <helpers>
-            <megamenu>
-                <class>Bc_MegaMenu_Helper</class>
-            </megamenu>
-        </helpers>
-    </global>
     <default>
         <megamenu>
             <general>
@@ -77,4 +47,25 @@
             </columns>
         </megamenu>
     </default>
+    <global>
+        <blocks>
+            <megamenu>
+                <class>Bc_MegaMenu_Block</class>
+            </megamenu>
+        </blocks>
+        <helpers>
+            <megamenu>
+                <class>Bc_MegaMenu_Helper</class>
+            </megamenu>
+        </helpers>
+    </global>
+    <frontend>
+        <layout>
+            <updates>
+                <megamenu>
+                    <file>bc_megamenu.xml</file>
+                </megamenu>
+            </updates>
+        </layout>
+    </frontend>
 </config>

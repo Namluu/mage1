@@ -14,13 +14,7 @@ class Bc_MegaMenu_Block_Navigation extends Mage_Catalog_Block_Navigation
         if (!$category->getIsActive()) return;
         $htmlTop ='';
         $id = $category->getId();
-        // --- Static Block ---
-        $blockId = sprintf(self::CUSTOM_BLOCK_TEMPLATE, $id); // --- static block key
-        $collection = Mage::getModel('cms/block')->getCollection()
-            ->addFieldToFilter('identifier', array(array('like' => $blockId . '_w%'), array('eq' => $blockId)))
-            ->addFieldToFilter('is_active', 1);
-        $blockId = $collection->getFirstItem()->getIdentifier();
-        $blockHtml = Mage::app()->getLayout()->createBlock('cms/block')->setBlockId($blockId)->toHtml();
+
         // --- Sub Categories level 0 ---
         $activeChildren = $this->_getActiveChildren($category, $level);
         // --- class for active category ---
@@ -51,6 +45,15 @@ class Bc_MegaMenu_Block_Navigation extends Mage_Catalog_Block_Navigation
             $imgCatHtml = $helper->categoryAttribute($categoryImage, $imgCatHtml, 'image');
         }
         /*end get img category parent*/
+
+        // --- Static Block ---
+        $blockId = sprintf(self::CUSTOM_BLOCK_TEMPLATE, $id); // --- static block key
+        $collection = Mage::getModel('cms/block')->getCollection()
+            ->addFieldToFilter('identifier', array(array('like' => $blockId . '_w%'), array('eq' => $blockId)))
+            ->addFieldToFilter('is_active', 1);
+        $blockId = $collection->getFirstItem()->getIdentifier();
+        $blockHtml = Mage::app()->getLayout()->createBlock('cms/block')->setBlockId($blockId)->toHtml();
+
         // --- Add Popup block (hidden) ---
         if ($drawPopup) {
             //$htmlPopup = '';
@@ -133,6 +136,7 @@ class Bc_MegaMenu_Block_Navigation extends Mage_Catalog_Block_Navigation
         // --- draw columns ---
         $lastColumnNumber = count($chunks);
         $i = 1;
+
         foreach ($chunks as $key => $value) {
             if (!count($value)) continue;
             $class = '';
@@ -217,6 +221,8 @@ class Bc_MegaMenu_Block_Navigation extends Mage_Catalog_Block_Navigation
             $target = self::_explodeArrayByColumnsVertical($target, $num);
         }
 
+        return $target; // fix bug separate column not correctly
+
         if ((int)Mage::getStoreConfig('megamenu/columns/integrate') && count($target)) {
             // --- combine consistently numerically small column ---
             // --- 1. calc length of each column ---
@@ -281,6 +287,7 @@ class Bc_MegaMenu_Block_Navigation extends Mage_Catalog_Block_Navigation
             $partition[$i][$key] = $value;
             if (++$i == $num) $i = 0;
         }
+
         return $partition;
     }
 

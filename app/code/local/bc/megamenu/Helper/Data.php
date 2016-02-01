@@ -12,12 +12,10 @@ class Bc_MegaMenu_Helper_Data extends Mage_Core_Helper_Abstract
         foreach ($categories as $_category) {
             $block->drawMegamenuItem($_category);
         }
+        
         $topMenuArray = $block->getTopMenuArray();
-        if ($topMenuArray!='') {
-            $topMenuContent =  $topMenuArray;
-        }
+        
         // --- Result ---
-        $topMenu = $topMenuContent;
-        return $topMenu;
+        return $topMenuArray;
     }
 }
