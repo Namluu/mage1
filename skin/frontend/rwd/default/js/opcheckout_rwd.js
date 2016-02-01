@@ -52,6 +52,7 @@ Payment.prototype.initialize = function(form, saveUrl, saveMdUrl){
     Payment.prototype._oldInitialize.call(this, form, saveUrl);
     this.saveMdUrl = saveMdUrl;
 };
+
 /* Override save of checkout for save purpose */
 Payment.prototype.save = function(){
     if (checkout.loadWaiting!=false) return;
@@ -137,4 +138,160 @@ Form.serializeMdElements = function(elements, options) {
         }
         return result;
     });
+};
+
+Review.prototype._oldInitialize = Review.prototype.initialize;
+Review.prototype.initialize = function(saveUrl, successUrl, agreementsForm, saveMdUrl){
+    Review.prototype._oldInitialize.call(this, saveUrl, successUrl, agreementsForm);
+    this.saveMdUrl = saveMdUrl;
+};
+
+/* Override review just submit moduslink instead */
+Review.prototype.save = function() {
+
+    if (checkout.loadWaiting!=false) return;
+
+    var handleIframe = function(form_selector) {
+        var $iframe = cnp_jQuery('#cnpIframe'),
+            $form = cnp_jQuery(form_selector);
+
+        $iframe.width($form.width())
+            .height($form.height())
+            .hide();
+
+        var spinner = new cnp_Spinner().spin($form.parent().get(0));
+
+        // delay the form submit because in rare cases the iframe isn't ready to be a target (e.g. chrome)
+        cnp_jQuery(cnp_Payment).off('submit', 'form.cnpForm');
+        setTimeout(function(){
+            var numRedirects = 0;
+            $iframe.load(function(){
+
+                $form.hide();
+                $iframe.show();
+                if( ++numRedirects == 2 ){ // 2nd load is either merchant or 3rd party confirmation, but merchant will be _top
+                    //that's 3D Secure
+                    setTimeout( function(){ spinner.stop() }, 200 );
+                    var dim = cnp_Setting.iFrameSize;
+                    $iframe.width(dim.width);
+                    $iframe.height(dim.height);
+                }
+
+                $iframe.attr("loaded", "true");
+            });
+
+            cnp_jQuery(document).trigger('cnp:form:send');
+
+            $form.submit();
+        },500);
+    };
+
+    var moduslinkProcess = function(transport) {
+
+        if (transport && transport.responseText) {
+            try{
+                response = eval('(' + transport.responseText + ')');
+            }
+            catch (e) {
+                response = {};
+            }
+
+            if (response.redirect) {
+                this.isSuccess = true;
+                location.href = response.redirect;
+                return;
+            }
+
+            if (response.success) {
+                this.isSuccess = true;
+
+                if(payment.currentMethod === "md_paypal") {
+                    jQuery(".formdiv_md .customDirectSubmit").trigger("click");
+                    handleIframe("#payment_form_md_paypal form");
+
+                    return;
+                }
+                else if(payment.currentMethod === "md_creditcard") {
+                    jQuery(".formdiv_md .cardSubmitButton").trigger("click");
+                    handleIframe("#payment_form_md_creditcard form");
+                    return;
+                }
+                /* other method of MODUSLINK add here such as: Direct Debit, iDEAL, SEPA, Klarna */
+
+            }
+            else{
+
+                if(payment.currentMethod === "md_paypal") {
+                    jQuery.unblockUI();
+                }
+
+
+                var msg = response.error_messages;
+                if (typeof(msg)=='object') {
+                    msg = msg.join("\n");
+                }
+                if (msg) {
+                    alert(msg);
+                }
+            }
+
+            if (response.update_section) {
+                $('checkout-'+response.update_section.name+'-load').update(response.update_section.html);
+            }
+
+            if (response.goto_section) {
+                checkout.gotoSection(response.goto_section, true);
+            }
+        }
+    };
+
+    var isMdMethod = function() {
+        return jQuery('[name="payment[method]"]:checked').attr('data-type') === "moduslink";
+    };
+
+    var onSave = isMdMethod() ? moduslinkProcess : this.onSave ;
+    var saveUrl = isMdMethod() ? this.saveMdUrl : this.saveUrl;
+
+    var hasLoading = false;
+    if(isMdMethod()) {
+        if(payment.currentMethod === "md_paypal") {
+            jQuery.blockUI({
+                message: '<img src="' + BlueCom.Image.Loading.src + '" />',
+                css: {
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    top:  (jQuery(window).height() - 48) /2 + 'px',
+                    left: (jQuery(window).width() - 48) /2 + 'px',
+                    width: '48px'
+                },
+                overlayCSS:  {
+                    backgroundColor: '#fff',
+                    cursor:          'normal'
+                }
+            });
+
+            hasLoading = true;
+        }
+
+    }
+
+    if( ! hasLoading) {
+        checkout.setLoadWaiting("review");
+    }
+
+    var params = Form.serialize(payment.form);
+    if (this.agreementsForm) {
+        params += '&'+Form.serialize(this.agreementsForm);
+    }
+    params.save = true;
+    var request = new Ajax.Request(
+        saveUrl,
+        {
+            method:'post',
+            parameters:params,
+            onComplete: this.onComplete,
+            onSuccess: onSave,
+            onFailure: checkout.ajaxFailure.bind(checkout)
+        }
+    );
 };

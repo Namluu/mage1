@@ -57,4 +57,38 @@ class Bluecom_Moduslink_OnepageController  extends Mage_Checkout_OnepageControll
         }
         $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
     }
+
+    /**
+     * Create order action
+     */
+    public function saveMdOrderAction()
+    {
+        if (!$this->_validateFormKey()) {
+            $this->_redirect('*/*');
+            return;
+        }
+
+        if ($this->_expireAjax()) {
+            return;
+        }
+
+        $result = array();
+        /*$requiredAgreements = Mage::helper('checkout')->getRequiredAgreementIds();
+        if ($requiredAgreements) {
+            $postedAgreements = array_keys($this->getRequest()->getPost('agreement', array()));
+            $diff = array_diff($requiredAgreements, $postedAgreements);
+            if ($diff) {
+                $result['success'] = false;
+                $result['error'] = true;
+                $result['error_messages'] = $this->__('Please agree to all the terms and conditions before placing the order.');
+                $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+                return;
+            }
+        }*/
+
+        $result['success'] = true;
+        $result['error']   = false;
+
+        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+    }
 }
