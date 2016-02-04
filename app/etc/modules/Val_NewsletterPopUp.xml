@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config>
+    <modules>
+        <Val_NewsletterPopUp>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Val_NewsletterPopUp>
+    </modules>
+</config>
