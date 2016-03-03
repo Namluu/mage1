@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <config>
     <modules>
-        <bc_megamenu>
+        <Mdg_Giftregistry>
             <active>true</active>
             <codePool>local</codePool>
-        </bc_megamenu>
+        </Mdg_Giftregistry >
     </modules>
 </config>
