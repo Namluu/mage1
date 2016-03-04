@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <tomblog_adminhtml_category_index>
+        <reference name="menu">
+            <action method="setActive"><menupath>tomblog</menupath></action>
+        </reference>
+        <reference name="content">
+            <block type="adminhtml/template" name="category" template="tomblog/category/list.phtml"/>
+        </reference>
+    </tomblog_adminhtml_category_index>
+    <tomblog_adminhtml_category_add>
+        <reference name="menu">
+            <action method="setActive"><menupath>tomblog</menupath></action>
+        </reference>
+        <reference name="content">
+            <block type="adminhtml/template" name="category" template="tomblog/category/form.phtml"/>
+        </reference>
+    </tomblog_adminhtml_category_add>
+</layout>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Tom_Tomblog>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Tom_Tomblog>
+    </modules>
+</config>

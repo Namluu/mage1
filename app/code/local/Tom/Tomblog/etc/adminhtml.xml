@@ -1,0 +1,34 @@
+<config>
+    <menu>
+        <tomblog translate="title" module="tomblog">
+            <title>Tom Blog</title>
+            <sort_order>100</sort_order>
+            <children>
+                <tomblog_admincategory translate="title" module="tomblog">
+                    <title>Category</title>
+                    <action>tomblog/adminhtml_category</action>
+                </tomblog_admincategory>
+                <tomblog_article translate="title" module="tomblog">
+                    <title>Article</title>
+                    <action>tomblog/adminhtml_article</action>
+                </tomblog_article>
+            </children>
+        </tomblog>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <tomblog translate="title" module="tomblog">
+                        <title>Tom Blog</title>
+                        <sort_order>1</sort_order>
+                        <children>
+                            <tomblog_category><title>Category</title></tomblog_category>
+                            <tomblog_article><title>Article</title></tomblog_article>
+                        </children>
+                    </tomblog>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>
