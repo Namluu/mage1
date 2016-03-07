@@ -1,19 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
-    <tomblog_adminhtml_category_index>
+    <adminhtml_customer_edit>
+        <reference name="left">
+            <reference name="customer_edit_tabs">
+                <block type="tomblog/adminhtml_customer_edit_tab_tomblog" name="tab_tomblog_main" template="tomblog/customer/main.phtml">
+                    <block type="tomblog/adminhtml_customer_edit_tab_tomblog_list" name="tab_blog_list" as="tab_blog_list" />
+                </block>
+                <action method="addTab">
+                    <name>tomblog</name>
+                    <block>tab_tomblog_main</block>
+                </action>
+            </reference>
+        </reference>
+    </adminhtml_customer_edit>
+    <adminhtml_category_index>
+        <!--
         <reference name="menu">
-            <action method="setActive"><menupath>tomblog</menupath></action>
+            <action method="setActive"><menupath>category</menupath></action>
         </reference>
         <reference name="content">
             <block type="adminhtml/template" name="category" template="tomblog/category/list.phtml"/>
         </reference>
-    </tomblog_adminhtml_category_index>
-    <tomblog_adminhtml_category_add>
+        -->
+        <reference name="content">
+            <block type="tomblog/adminhtml_category" name="category"/>
+        </reference>
+    </adminhtml_category_index>
+    <!--
+    <adminhtml_category_add>
         <reference name="menu">
             <action method="setActive"><menupath>tomblog</menupath></action>
         </reference>
         <reference name="content">
             <block type="adminhtml/template" name="category" template="tomblog/category/form.phtml"/>
         </reference>
-    </tomblog_adminhtml_category_add>
+    </adminhtml_category_add>
+    -->
+    <adminhtml_category_edit>
+        <reference name="content">
+            <block type="tomblog/adminhtml_category_edit" name="category_edit"/>
+        </reference>
+    </adminhtml_category_edit>
+    <adminhtml_category_new>
+        <reference name="content">
+            <block type="tomblog/adminhtml_category_edit" name="category_edit"/>
+        </reference>
+    </adminhtml_category_new>
 </layout>

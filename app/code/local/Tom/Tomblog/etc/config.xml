@@ -24,13 +24,13 @@
     </frontend>
     <admin>
         <routers>
-            <tomblog>
-                <use>admin</use>
+            <adminhtml>
                 <args>
-                    <module>Tom_Tomblog</module>
-                    <frontName>tomblog</frontName>
+                    <modules>
+                        <tom_tomblog after="Mage_Adminhtml">Tom_Tomblog_Adminhtml</tom_tomblog>
+                    </modules>
                 </args>
-            </tomblog>
+            </adminhtml>
         </routers>
     </admin>
     <adminhtml>
