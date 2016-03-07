@@ -1,0 +1,1 @@
+Combine edit and new form, use registry
