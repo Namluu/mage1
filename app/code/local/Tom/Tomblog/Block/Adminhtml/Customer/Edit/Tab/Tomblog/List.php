@@ -6,7 +6,7 @@ class Tom_Tomblog_Block_Adminhtml_Customer_Edit_Tab_Tomblog_List extends Mage_Ad
         parent::__construct();
         $this->setId('blogList');
         $this->setUseAjax(true);
-        $this->setDefaultSort('event_date');
+        $this->setDefaultSort('date');
         $this->setFilterVisibility(false);
         $this->setPagerVisibility(false);
     }
@@ -14,7 +14,8 @@ class Tom_Tomblog_Block_Adminhtml_Customer_Edit_Tab_Tomblog_List extends Mage_Ad
     {
         $collection = Mage::getModel('tomblog/article')
             ->getCollection()
-            ->addFieldToFilter('main_table.customer_id', $this->getRequest()->getParam('id'));
+            ->addFieldToFilter('main_table.customer_id', $this->getRequest()->getParam('id'))
+            ->join(array('cat'=>'category'), 'cat.id=main_table.category_id', array('cat_title'=> 'title'));
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -36,9 +37,9 @@ class Tom_Tomblog_Block_Adminhtml_Customer_Edit_Tab_Tomblog_List extends Mage_Ad
             'index'    => 'date',
             'sortable' => false,
         ));
-        $this->addColumn('category_id', array(
+        $this->addColumn('category', array(
             'header'   => $this->__('Category'),
-            'index'    => 'category_id',
+            'index'    => 'cat_title',
             'sortable' => false,
         ));
         return parent::_prepareColumns();

@@ -1,6 +1,6 @@
 <config>
     <menu>
-        <tom_tomblog>
+        <tomblog>
             <title>Tom Blog</title>
             <sort_order>71</sort_order>
             <children>
@@ -13,7 +13,7 @@
                     <action>adminhtml/article</action>
                 </article>
             </children>
-        </tom_tomblog>
+        </tomblog>
     </menu>
     <acl>
         <resources>

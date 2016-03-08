@@ -13,13 +13,13 @@
             </updates>
         </layout>
         <routers>
-            <weblog>
+            <tomblog>
                 <use>standard</use>
                 <args>
                     <module>Tom_Tomblog</module>
                     <frontName>tomblog</frontName>
                 </args>
-            </weblog>
+            </tomblog>
         </routers>
     </frontend>
     <admin>
