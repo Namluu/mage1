@@ -10,6 +10,7 @@ $installer->run("
         `description` text,
         `date` datetime default NULL,
         `timestamp` timestamp NOT NULL default CURRENT_TIMESTAMP,
+        `status` int(1) default 1,
         PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ");
@@ -24,6 +25,7 @@ $installer->run("
         `timestamp` timestamp NOT NULL default CURRENT_TIMESTAMP,
         `category_id` int(11) NOT NULL,
         `customer_id` int(11) NOT NULL,
+        `status` int(1) default 1,
         PRIMARY KEY (`id`),
         KEY `category_id` (`category_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

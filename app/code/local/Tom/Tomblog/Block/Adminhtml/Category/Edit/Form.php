@@ -10,6 +10,7 @@ class Tom_Tomblog_Block_Adminhtml_Category_Edit_Form extends  Mage_Adminhtml_Blo
         ));
         $form->setUseContainer(true);
         $this->setForm($form);
+        $data = null;
         if (Mage::getSingleton('adminhtml/session')->getFormData()){
             $data = Mage::getSingleton('adminhtml/session')->getFormData();
             Mage::getSingleton('adminhtml/session')->setFormData(null);
@@ -18,12 +19,15 @@ class Tom_Tomblog_Block_Adminhtml_Category_Edit_Form extends  Mage_Adminhtml_Blo
 
         $fieldset = $form->addFieldset('category_form', array('legend'=>$this->__('Category information')));
 
-        $fieldset->addField('id', 'hidden', array(
-            'label'     => $this->__('Id'),
-            'class'     => '',
-            'required'  => false,
-            'name'      => 'id',
-        ));
+        if ($data && $data['id']) {
+            $fieldset->addField('id', 'hidden', array(
+                'label'     => $this->__('Id'),
+                'class'     => '',
+                'required'  => false,
+                'name'      => 'id',
+            ));
+        }
+
         $fieldset->addField('title', 'text', array(
             'label'     => $this->__('Title'),
             'class'     => 'required-entry',
@@ -35,6 +39,13 @@ class Tom_Tomblog_Block_Adminhtml_Category_Edit_Form extends  Mage_Adminhtml_Blo
             'class'     => 'required-entry',
             'required'  => true,
             'name'      => 'description',
+        ));
+        $fieldset->addField('status', 'select', array(
+            'label'     => $this->__('Status'),
+            'class'     => 'required-entry',
+            'required'  => true,
+            'name'      => 'status',
+            'values'    => Mage::getSingleton('tomblog/category')->getStatuses(),
         ));
         $form->setValues($data);
         return parent::_prepareForm();

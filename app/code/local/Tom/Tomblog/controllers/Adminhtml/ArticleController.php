@@ -1,5 +1,5 @@
 <?php
-class Tom_Tomblog_Adminhtml_TomblogController extends Mage_Adminhtml_Controller_Action
+class Tom_Tomblog_Adminhtml_ArticleController extends Mage_Adminhtml_Controller_Action
 {
     public function indexAction()
     {

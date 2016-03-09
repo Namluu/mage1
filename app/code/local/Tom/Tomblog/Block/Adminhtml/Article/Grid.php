@@ -1,15 +1,15 @@
 <?php
-class Tom_Tomblog_Block_Adminhtml_Category_Grid extends Mage_Adminhtml_Block_Widget_Grid
+class Tom_Tomblog_Block_Adminhtml_Article_Grid extends Mage_Adminhtml_Block_Widget_Grid
 {
     public function __construct(){
         parent::__construct();
-        $this->setId('categoryGrid');
+        $this->setId('aticleGrid');
         $this->setDefaultSort('date');
         $this->setDefaultDir('ASC');
         $this->setSaveParametersInSession(true);
     }
     protected function _prepareCollection(){
-        $collection = Mage::getModel('tomblog/category')->getCollection();
+        $collection = Mage::getModel('tomblog/article')->getCollection();
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }

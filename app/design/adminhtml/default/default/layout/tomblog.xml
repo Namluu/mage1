@@ -13,29 +13,12 @@
             </reference>
         </reference>
     </adminhtml_customer_edit>
+
     <adminhtml_category_index>
-        <!--
-        <reference name="menu">
-            <action method="setActive"><menupath>category</menupath></action>
-        </reference>
-        <reference name="content">
-            <block type="adminhtml/template" name="category" template="tomblog/category/list.phtml"/>
-        </reference>
-        -->
         <reference name="content">
             <block type="tomblog/adminhtml_category" name="category"/>
         </reference>
     </adminhtml_category_index>
-    <!--
-    <adminhtml_category_add>
-        <reference name="menu">
-            <action method="setActive"><menupath>tomblog</menupath></action>
-        </reference>
-        <reference name="content">
-            <block type="adminhtml/template" name="category" template="tomblog/category/form.phtml"/>
-        </reference>
-    </adminhtml_category_add>
-    -->
     <adminhtml_category_edit>
         <reference name="content">
             <block type="tomblog/adminhtml_category_edit" name="category_edit"/>
@@ -46,4 +29,10 @@
             <block type="tomblog/adminhtml_category_edit" name="category_edit"/>
         </reference>
     </adminhtml_category_new>
+
+    <adminhtml_article_index>
+        <reference name="content">
+            <block type="tomblog/adminhtml_article" name="article"/>
+        </reference>
+    </adminhtml_article_index>
 </layout>
