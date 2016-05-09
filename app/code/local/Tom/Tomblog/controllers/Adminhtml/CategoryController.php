@@ -99,7 +99,7 @@ class Tom_Tomblog_Adminhtml_CategoryController extends Mage_Adminhtml_Controller
         } else {
             try {
                 foreach ($ids as $id) {
-                    $warranty = Mage::getModel('tomblog/category')
+                    $category = Mage::getModel('tomblog/category')
                         ->load($id)
                         ->setStatus($status)
                         ->setIsMassUpdate(true)

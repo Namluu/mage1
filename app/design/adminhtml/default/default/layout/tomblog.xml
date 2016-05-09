@@ -26,7 +26,7 @@
     </adminhtml_category_edit>
     <adminhtml_category_new>
         <reference name="content">
-            <block type="tomblog/adminhtml_category_edit" name="category_edit"/>
+            <block type="tomblog/adminhtml_category_edit" name="category_new"/>
         </reference>
     </adminhtml_category_new>
 
@@ -35,4 +35,14 @@
             <block type="tomblog/adminhtml_article" name="article"/>
         </reference>
     </adminhtml_article_index>
+    <adminhtml_article_edit>
+        <reference name="content">
+            <block type="tomblog/adminhtml_article_edit" name="article_edit"/>
+        </reference>
+    </adminhtml_article_edit>
+    <adminhtml_article_new>
+        <reference name="content">
+            <block type="tomblog/adminhtml_article_edit" name="article_new"/>
+        </reference>
+    </adminhtml_article_new>
 </layout>

@@ -14,4 +14,14 @@ class Tom_Tomblog_Model_Category extends Mage_Core_Model_Abstract
             self::STATUS_DISABLE   => Mage::helper('tomblog')->__('Disable')
         );
     }
+
+    public function toOptionArray() {
+        $collection = Mage::getModel('tomblog/category')->getCollection();
+        $categories = array(array('value'=>'', 'label'=>'Please Select'));
+        foreach ($collection as $item){
+            $categories[] = array('value'=>$item->getId(),'label'=>$item->getTitle());
+        }
+
+        return $categories;
+    }
 }

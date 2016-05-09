@@ -9,7 +9,10 @@ class Tom_Tomblog_Block_Adminhtml_Article_Grid extends Mage_Adminhtml_Block_Widg
         $this->setSaveParametersInSession(true);
     }
     protected function _prepareCollection(){
-        $collection = Mage::getModel('tomblog/article')->getCollection();
+        $collection = Mage::getModel('tomblog/article')->getCollection()
+            ->join(array('cat'=> 'category'), 'cat.id=main_table.category_id', array('cat_title'=>'title'))
+            ->join(array('cus'=> 'customer/entity'), 'cus.entity_id=main_table.customer_id', array('cus_email'=>'email'));
+
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -27,6 +30,14 @@ class Tom_Tomblog_Block_Adminhtml_Article_Grid extends Mage_Adminhtml_Block_Widg
         $this->addColumn('date', array(
             'header'   => $this->__('Created Date'),
             'index'    => 'date'
+        ));
+        $this->addColumn('cat_title', array(
+            'header'   => $this->__('Category'),
+            'index'    => 'cat_title'
+        ));
+        $this->addColumn('cus_email', array(
+            'header'   => $this->__('Customer'),
+            'index'    => 'cus_email'
         ));
         $this->addColumn('status', array(
             'header'   => $this->__('Status'),
