@@ -1,12 +1,12 @@
 /**
- * Magento Enterprise Edition
+ * Magento
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Magento Enterprise Edition End User License Agreement
- * that is bundled with this package in the file LICENSE_EE.txt.
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
  * It is also available through the world-wide-web at this URL:
- * http://www.magento.com/license/enterprise-edition
+ * http://opensource.org/licenses/afl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@magento.com so we can send you a copy immediately.
@@ -19,8 +19,8 @@
  *
  * @category    design
  * @package     rwd_default
- * @copyright Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
- * @license http://www.magento.com/license/enterprise-edition
+ * @copyright   Copyright (c) 2006-2016 X.commerce, Inc. and affiliates (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 var ConfigurableMediaImages = {
@@ -52,17 +52,19 @@ var ConfigurableMediaImages = {
         var compatibleProducts = [];
         var compatibleProductSets = [];
         selectedLabels.each(function(selectedLabel) {
-            if(!productFallback['option_labels'][selectedLabel]) {
-                return;
+            if(typeof(productFallback['option_labels']) != 'undefined') {
+                if (!productFallback['option_labels'][selectedLabel]) {
+                    return;
+                }
+
+                var optionProducts = productFallback['option_labels'][selectedLabel]['products'];
+                compatibleProductSets.push(optionProducts);
+
+                //optimistically push all products
+                optionProducts.each(function (productId) {
+                    compatibleProducts.push(productId);
+                });
             }
-
-            var optionProducts = productFallback['option_labels'][selectedLabel]['products'];
-            compatibleProductSets.push(optionProducts);
-
-            //optimistically push all products
-            optionProducts.each(function(productId) {
-                compatibleProducts.push(productId);
-            });
         });
 
         //intersect compatible products
@@ -88,10 +90,12 @@ var ConfigurableMediaImages = {
         }
 
         //first, try to get label-matching image on config product for this option's label
-        var currentLabelImage = fallback['option_labels'][optionLabel];
-        if(currentLabelImage && fallback['option_labels'][optionLabel]['configurable_product'][ConfigurableMediaImages.imageType]) {
-            //found label image on configurable product
-            return fallback['option_labels'][optionLabel]['configurable_product'][ConfigurableMediaImages.imageType];
+        if(typeof(fallback['option_labels']) != 'undefined') {
+            var currentLabelImage = fallback['option_labels'][optionLabel];
+            if (currentLabelImage && fallback['option_labels'][optionLabel]['configurable_product'][ConfigurableMediaImages.imageType]) {
+                //found label image on configurable product
+                return fallback['option_labels'][optionLabel]['configurable_product'][ConfigurableMediaImages.imageType];
+            }
         }
 
         var compatibleProducts = ConfigurableMediaImages.getCompatibleProductImages(fallback, selectedLabels);

@@ -1,12 +1,12 @@
 /**
- * Magento Enterprise Edition
+ * Magento
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Magento Enterprise Edition End User License Agreement
- * that is bundled with this package in the file LICENSE_EE.txt.
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
  * It is also available through the world-wide-web at this URL:
- * http://www.magento.com/license/enterprise-edition
+ * http://opensource.org/licenses/afl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@magento.com so we can send you a copy immediately.
@@ -19,8 +19,8 @@
  *
  * @category    design
  * @package     rwd_default
- * @copyright Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
- * @license http://www.magento.com/license/enterprise-edition
+ * @copyright   Copyright (c) 2006-2016 X.commerce, Inc. and affiliates (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 var windowLoaded = false;
@@ -46,7 +46,7 @@ Product.Config.prototype.initialize = function(config)
     this.origInitialize(config);
     this.configureObservers = [];
     this.loadOptions();
-}
+};
 
 Product.Config.prototype.handleSelectChange = function(element) {
     this.configureElement(element);
@@ -207,7 +207,7 @@ Product.ConfigurableSwatches.prototype = {
                             this.selectOption(opt);
                             throw $break2;
                         };
-                    }.bind(this))
+                    }.bind(this));
                 } catch(e) {};
             }.bind(this));
             this._F.presetValuesSelected = true;
@@ -506,9 +506,8 @@ Product.ConfigurableSwatches.prototype = {
         // run setAvailable before previewAvailable and reset last label if
         // 1) the timeout has not been run (which means lastOpt != false) and
         // 2) the last hover swatch's attribute is different than this hover swatch's
+        this.setAvailableOptions();
         if(lastOpt && lastOpt.attr.id != opt.attr.id) {
-            this.setAvailableOptions();
-
             // reset last hover swatch's attribute
             lastOpt.attr._e.attrLabel.innerHTML = lastOpt.attr._e.selectedOption ? this.getOptionLabel(lastOpt.attr._e.selectedOption) : '';
         }
@@ -800,4 +799,4 @@ Product.ConfigurableSwatches.prototype = {
             return result;
         }
     }
-}
+};

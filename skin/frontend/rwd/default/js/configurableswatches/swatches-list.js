@@ -1,12 +1,12 @@
 /**
- * Magento Enterprise Edition
+ * Magento
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Magento Enterprise Edition End User License Agreement
- * that is bundled with this package in the file LICENSE_EE.txt.
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
  * It is also available through the world-wide-web at this URL:
- * http://www.magento.com/license/enterprise-edition
+ * http://opensource.org/licenses/afl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@magento.com so we can send you a copy immediately.
@@ -19,8 +19,8 @@
  *
  * @category    design
  * @package     rwd_default
- * @copyright Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
- * @license http://www.magento.com/license/enterprise-edition
+ * @copyright   Copyright (c) 2006-2016 X.commerce, Inc. and affiliates (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 var ConfigurableSwatchesList = {
@@ -43,15 +43,26 @@ var ConfigurableSwatchesList = {
         var that = this;
         var $swatch = $j(swatch);
         var productId;
+        $j($swatch).hover(function() {
+            /**
+             *
+             * - Preview the stock status
+             **/
+            var swatchUl = $swatch.parent();
+            swatchUl.find('.x').each(function(){
+                $j(this).show();
+                $j(this).closest('li').addClass('not-available');
+            });
+        });
         if (productId = $swatch.data('product-id')) {
             if (typeof(this.swatchesByProduct[productId]) == 'undefined') {
                 this.swatchesByProduct[productId] = [];
             }
             this.swatchesByProduct[productId].push($swatch);
 
-            $swatch.find('a').on('click', function() {
+            $swatch.find('a').on('click', function(e) {
+                e.preventDefault();
                 that.handleSwatchSelect($swatch);
-                return false;
             });
         }
     },
@@ -70,7 +81,7 @@ var ConfigurableSwatchesList = {
 
         $swatch.addClass('selected');
     }
-}
+};
 
 $j(document).on('configurable-media-images-init', function(){
     ConfigurableSwatchesList.init();

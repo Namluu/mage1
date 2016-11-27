@@ -1,13 +1,13 @@
 <?php
 /**
- * Magento Enterprise Edition
+ * Magento
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Magento Enterprise Edition End User License Agreement
- * that is bundled with this package in the file LICENSE_EE.txt.
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * http://www.magento.com/license/enterprise-edition
+ * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@magento.com so we can send you a copy immediately.
@@ -20,19 +20,19 @@
  *
  * @category    Tests
  * @package     Tests_Functional
- * @copyright Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
- * @license http://www.magento.com/license/enterprise-edition
+ * @copyright  Copyright (c) 2006-2016 X.commerce, Inc. and affiliates (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 namespace Magento\Mtf\Page;
 
-use Magento\Mtf\Config;
 use Magento\Mtf\ObjectManager;
 use Mage\Adminhtml\Test\Page\AdminAuthLogin;
 use Mage\Adminhtml\Test\Page\Adminhtml\Dashboard;
 use Magento\Mtf\Block\BlockFactory;
 use Magento\Mtf\Client\BrowserInterface;
 use Magento\Mtf\Config\DataInterface;
+use Magento\Mtf\Config\Data;
 
 /**
  * Class for backend pages.
@@ -54,37 +54,13 @@ class BackendPage extends Page
     protected $dashboard;
 
     /**
-     * Configuration data.
-     *
-     * @var Config
-     */
-    protected $configuration;
-
-    /**
-     * @constructor
-     * @param DataInterface $configData
-     * @param BrowserInterface $browser
-     * @param BlockFactory $blockFactory
-     * @param Config $configuration
-     */
-    public function __construct(
-        DataInterface $configData,
-        BrowserInterface $browser,
-        BlockFactory $blockFactory,
-        Config $configuration
-    ) {
-        parent::__construct($configData, $browser, $blockFactory);
-        $this->configuration = $configuration;
-    }
-
-    /**
      * Init page. Set page url.
      *
      * @return void
      */
-    protected function _init()
+    protected function initUrl()
     {
-        $this->_url = $_ENV['app_backend_url'] . static::MCA;
+        $this->url = $_ENV['app_backend_url'] . static::MCA;
     }
 
     /**
@@ -95,12 +71,13 @@ class BackendPage extends Page
      */
     public function open(array $params = [])
     {
+        $systemConfig = ObjectManager::getInstance()->create('Magento\Mtf\Config\DataInterface');
         $admin = [
             'username' => [
-                'value' => $this->configuration->getParameter('application/backendLogin')
+                'value' => $systemConfig->get('application/0/backendLogin/0/value')
             ],
             'password' => [
-                'value' => $this->configuration->getParameter('application/backendPassword')
+                'value' => $systemConfig->get('application/0/backendPassword/0/value')
             ]
         ];
         $this->adminAuthLogin = ObjectManager::getInstance()->create('Mage\Adminhtml\Test\Page\AdminAuthLogin');
