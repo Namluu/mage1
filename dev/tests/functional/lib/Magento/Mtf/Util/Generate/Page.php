@@ -1,13 +1,13 @@
 <?php
 /**
- * Magento
+ * Magento Enterprise Edition
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Magento Enterprise Edition End User License Agreement
+ * that is bundled with this package in the file LICENSE_EE.txt.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
+ * http://www.magento.com/license/enterprise-edition
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@magento.com so we can send you a copy immediately.
@@ -20,15 +20,13 @@
  *
  * @category    Tests
  * @package     Tests_Functional
- * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
- * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license http://www.magento.com/license/enterprise-edition
  */
 
 namespace Magento\Mtf\Util\Generate;
 
 /**
- * Class Page.
- *
  * Page classes generator.
  *
  * @internal
@@ -39,6 +37,19 @@ class Page extends AbstractGenerate
      * @var \Magento\Mtf\Config\DataInterface
      */
     protected $configData;
+
+    /**
+     * @constructor
+     * @param \Magento\Mtf\ObjectManagerInterface $objectManager
+     * @param \Magento\Mtf\Config\DataInterface $configData
+     */
+    public function __construct(
+        \Magento\Mtf\ObjectManagerInterface $objectManager,
+        \Magento\Mtf\Config\DataInterface $configData
+    ) {
+        parent::__construct($objectManager);
+        $this->configData = $configData;
+    }
 
     /**
      * Launch generation of all page classes.
@@ -73,8 +84,7 @@ class Page extends AbstractGenerate
         }
 
         return $this->generateClass(
-            end($classNameParts),
-            $this->configData->get($classDataKey)
+            end($classNameParts), $this->configData->get($classDataKey)
         );
     }
 
@@ -89,13 +99,13 @@ class Page extends AbstractGenerate
     protected function generateClass($name, array $data)
     {
         $className = ucfirst($name);
-        $module = str_replace('_', '/', $data['module']);
-        $area = empty($data['area']) ? null : $data['area'];
-        $folderPath = $module . '/Test/Page' . (($area === null) ? '' : ('/' . $area));
+        $module =  str_replace('_', '/', $data['module']);
+        $folderPath = $module . '/Test/Page' . (empty($data['area']) ? '' : ('/' . $data['area']));
         $realFolderPath = MTF_BP . '/generated/' . $folderPath;
         $namespace = str_replace('/', '\\', $folderPath);
+        $pageType = str_replace($module, '', $folderPath);
+        $areaMtfPage = strpos($pageType, 'Adminhtml') === false ? 'FrontendPage' : 'BackendPage';
         $mca = isset($data['mca']) ? $data['mca'] : '';
-        $areaMtfPage = $this->getParentPage($folderPath, $mca, $area);
         $blocks = isset($data['block']) ? $data['block'] : [];
 
         $content = "<?php\n";
@@ -177,28 +187,5 @@ class Page extends AbstractGenerate
         $content .= $indent . "],\n";
 
         return $content;
-    }
-
-    /**
-     * Determine parent page class.
-     *
-     * @param string $folderPath
-     * @param string $mca
-     * @param string|null $area
-     * @return string
-     */
-    protected function getParentPage($folderPath, $mca, $area)
-    {
-        if (strpos($folderPath, 'Adminhtml') !== false && $area === 'Adminhtml') {
-            $areaMtfPage = 'BackendPage';
-        } else {
-            if (strpos($mca, 'http') === false) {
-                $areaMtfPage = 'FrontendPage';
-            } else {
-                $areaMtfPage = 'ExternalPage';
-            }
-        }
-
-        return $areaMtfPage;
     }
 }

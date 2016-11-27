@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<config>
-    <modules>
-        <bc_megamenu>
-            <active>true</active>
-            <codePool>local</codePool>
-        </bc_megamenu>
-    </modules>
-</config>

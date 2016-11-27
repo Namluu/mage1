@@ -116,3 +116,31 @@ skin/frontend/enterprise
 skin/install/
 var/
 media/
+
+# magento skin folder
+/skin/adminhtml/default/default/
+/skin/adminhtml/default/enterprise/
+/skin/frontend/base/
+/skin/frontend/enterprise/
+/skin/frontend/rwd/
+/skin/install/
+
+# magento app folder
+/app/.htaccess
+/app/Mage.php
+/app/code/community/Cm/
+/app/code/community/Phoenix/
+/app/code/core/
+/app/design/adminhtml/default
+/app/design/frontend/base/
+/app/design/frontend/enterprise/
+/app/design/frontend/rwd/
+/app/design/install/
+/app/etc/config.xml
+/app/etc/enterprise.xml
+/app/etc/local.xml
+/app/etc/local.xml.additional
+/app/etc/local.xml.template
+/app/locale/
+
+dev/

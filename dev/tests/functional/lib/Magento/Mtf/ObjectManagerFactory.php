@@ -1,13 +1,13 @@
 <?php
 /**
- * Magento
+ * Magento Enterprise Edition
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Magento Enterprise Edition End User License Agreement
+ * that is bundled with this package in the file LICENSE_EE.txt.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
+ * http://www.magento.com/license/enterprise-edition
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@magento.com so we can send you a copy immediately.
@@ -20,8 +20,8 @@
  *
  * @category    Tests
  * @package     Tests_Functional
- * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
- * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license http://www.magento.com/license/enterprise-edition
  */
 
 namespace Magento\Mtf;
@@ -31,7 +31,7 @@ use Magento\Mtf\Stdlib\BooleanUtils;
 use Magento\Mtf\ObjectManager\Factory;
 
 /**
- * Class ObjectManagerFactory
+ * Object manager factory.
  *
  * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -39,21 +39,21 @@ use Magento\Mtf\ObjectManager\Factory;
 class ObjectManagerFactory
 {
     /**
-     * Object Manager class name
+     * Object Manager class name.
      *
      * @var string
      */
     protected $locatorClassName = '\Magento\Mtf\ObjectManager';
 
     /**
-     * DI Config class name
+     * DI Config class name.
      *
      * @var string
      */
     protected $configClassName = '\Magento\Mtf\ObjectManager\Config';
 
     /**
-     * Create Object Manager
+     * Create Object Manager.
      *
      * @param array $sharedInstances
      * @return ObjectManager
@@ -72,31 +72,18 @@ class ObjectManagerFactory
         $argInterpreter = $this->createArgumentInterpreter(new BooleanUtils());
         $argumentMapper = new \Magento\Mtf\ObjectManager\Config\Mapper\Dom($argInterpreter);
 
-        $autoloader = new \Magento\Mtf\Code\Generator\Autoloader(
-            new \Magento\Mtf\Code\Generator(
-                [
-                    'page' => 'Magento\Mtf\Util\Generate\Page',
-                    'repository' => 'Magento\Mtf\Util\Generate\Repository',
-                    'fixture' => 'Magento\Mtf\Util\Generate\Fixture'
-                ]
-            )
-        );
-        spl_autoload_register([$autoloader, 'load']);
-
         $sharedInstances['Magento\Mtf\Data\Argument\InterpreterInterface'] = $argInterpreter;
         $sharedInstances['Magento\Mtf\ObjectManager\Config\Mapper\Dom'] = $argumentMapper;
         $objectManager = new $this->locatorClassName($factory, $diConfig, $sharedInstances);
-
         $factory->setObjectManager($objectManager);
         ObjectManager::setInstance($objectManager);
-
         self::configure($objectManager);
 
         return $objectManager;
     }
 
     /**
-     * Return newly created instance on an argument interpreter, suitable for processing DI arguments
+     * Return newly created instance on an argument interpreter, suitable for processing DI arguments.
      *
      * @param \Magento\Mtf\Stdlib\BooleanUtils $booleanUtils
      * @return \Magento\Mtf\Data\Argument\InterpreterInterface
@@ -106,7 +93,7 @@ class ObjectManagerFactory
     ) {
         $constInterpreter = new \Magento\Mtf\Data\Argument\Interpreter\Constant();
         $result = new \Magento\Mtf\Data\Argument\Interpreter\Composite(
-            [
+            array(
                 'boolean' => new \Magento\Mtf\Data\Argument\Interpreter\Boolean($booleanUtils),
                 'string' => new \Magento\Mtf\Data\Argument\Interpreter\String($booleanUtils),
                 'number' => new \Magento\Mtf\Data\Argument\Interpreter\Number(),
@@ -114,7 +101,7 @@ class ObjectManagerFactory
                 'const' => $constInterpreter,
                 'object' => new \Magento\Mtf\Data\Argument\Interpreter\Object($booleanUtils),
                 'init_parameter' => new \Magento\Mtf\Data\Argument\Interpreter\Argument($constInterpreter),
-            ],
+            ),
             \Magento\Mtf\ObjectManager\Config\Reader\Dom::TYPE_ATTRIBUTE
         );
         // Add interpreters that reference the composite
@@ -123,7 +110,7 @@ class ObjectManagerFactory
     }
 
     /**
-     * Get MTF Object Manager instance
+     * Get MTF Object Manager instance.
      *
      * @return ObjectManager
      */
@@ -139,11 +126,12 @@ class ObjectManagerFactory
 
     /**
      * Configure Object Manager
-     * This method is static to have the ability to configure multiple instances of Object manager when needed
+     * This method is static to have the ability to configure multiple instances of Object manager when needed.
      *
-     * @param MagentoObjectManager $objectManager
+     * @param \Magento\Mtf\ObjectManagerInterface $objectManager
+     * @return void
      */
-    public static function configure(MagentoObjectManager $objectManager)
+    public static function configure(\Magento\Mtf\ObjectManagerInterface $objectManager)
     {
         $objectManager->configure(
             $objectManager->get('Magento\Mtf\ObjectManager\ConfigLoader\Primary')->load()
